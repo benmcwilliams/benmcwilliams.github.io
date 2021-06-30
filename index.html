@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<title>Leaflet Web Map</title>
+
+<!-- https://www.youtube.com/watch?v=SCjVNBemQdc&list=PLm76kc4VPkn27kRYq-58COO5r5bQdrKyy&index=10 -->
+
+<!-- We can see a range of basemaps at http://leaflet-extras.github.io/leaflet-providers/preview/index.html -->
+<!-- we need to reference the CSS and JavaScript files of leaflet.  -->
+
+   <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+      integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+      crossorigin=""
+    />
+
+    <script
+      src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+      integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+      crossorigin=""
+    ></script>
+
+    <script src="convertcsv.js"></script>  
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@5/turf.min.js"></script>
+<!-- Turf JS is used for calculating the distance between two points on the map -->
+
+</head>
+
+<style>
+#map {
+    width: 1250px;
+    height: 1000px;
+}
+</style>
+
+<!-- We can create multiple style sheets to edit different parts, this sets the style for popups.  -->
+
+<style> 
+.leaflet-popup-content-wrapper {
+     border-radius:  0, ;
+     background: grey;
+     color: white;
+     font-size: 10px;
+}
+</style>
+
+
+</head>
+
+<body>
+<div id="overlay">
+    <h2>My Map<h2>
+    <input type='text' id='current_center' />
+    <button id='toggleLayer'>Toggle</button>
+<div>
+
+
+<!-- Leaflet requires a div element to contain the map.  -->
+    <div id='map'></div>
+
+<script>
+
+    var map = L.map('map',{scrollWheelZoom:true})
+    .setView([52.5, 13.4], 5);
+
+    L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.png', {
+    attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    var popup = L.popup();
+
+    var burgerIcon = L.icon({
+        iconUrl: 'burger.png',
+
+        iconSize:     [32, 37], // size of the icon (you need to look at the png file dimensions)
+        iconAnchor:   [16, 37], // point of the icon which will correspond to marker's location
+        popupAnchor:  [0, -30] // point from which the popup should open relative to the iconAnchor
+    });
+
+    var highBurgerIcon = L.icon({
+        iconUrl: 'burger.png',
+
+        iconSize:     [32, 37], // size of the icon (you need to look at the png file dimensions)
+        iconAnchor:   [16, 45], // point of the icon which will correspond to marker's location
+        popupAnchor:  [0, -30] // point from which the popup should open relative to the iconAnchor
+    });
+
+    var drink = L.icon({
+        iconUrl: 'drink.png',
+
+        iconSize:     [32, 37], // size of the icon (you need to look at the png file dimensions)
+        iconAnchor:   [16, 37], // point of the icon which will correspond to marker's location
+        popupAnchor:  [0, -30] // point from which the popup should open relative to the iconAnchor
+    });
+
+    var markers = [];
+
+    var coordinates = [
+        [52.5,13.4],
+        [52.55,13.45],
+        [52.3,13.7]
+        ];
+
+    coordinates.forEach(function(coords){
+        var marker = L.marker(coords, {
+            icon: burgerIcon
+        }).on('mousemove', function(e) {
+            console.log(e)
+            e.target.setIcon(highBurgerIcon);
+        }).on('mouseout', function(e) {
+            e.target.setIcon(burgerIcon);
+        });
+        markers.push(marker)
+    });
+
+    var featureGroup = L.featureGroup(markers).addTo(map);
+
+    map.fitBounds(featureGroup.getBounds(), {
+        padding: [0,0]
+    });  
+
+
+// We use console.log(e) to see what information an event on the map returns us. 
+
+</script>
+
+</body>
+
+</html>
