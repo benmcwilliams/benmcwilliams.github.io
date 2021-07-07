@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<title>Leaflet Web Map</title>
+
+<!-- https://www.youtube.com/watch?v=SCjVNBemQdc&list=PLm76kc4VPkn27kRYq-58COO5r5bQdrKyy&index=10 -->
+
+<!-- We can see a range of basemaps at http://leaflet-extras.github.io/leaflet-providers/preview/index.html -->
+<!-- we need to reference the CSS and JavaScript files of leaflet.  -->
+
+   <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+      integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+      crossorigin=""
+    />
+
+<style>
+.leaflet-control-layers-expanded { 
+/*    outline-style:  dashed;
+    outline-color: #b32d44;
+    outline-width: 10;*/
+    background-color:  #fbf7f8;
+    border-style:  solid;
+    border-color: #b32d44;
+    border-width:  30;
+    font-weight: bold}
+</style>
+
+    <link rel="stylesheet" href="MarkerCluster.css">
+    <link rel="stylesheet" href="MarkerCluster.Default.css">
+ 
+    <script
+      src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+      integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+      crossorigin=""
+    ></script>
+
+    <script src="cleaned_installations2.js"></script>  
+    <script src="markercluster-src.js"></script>
+    <script src="markercluster.js"></script>  
+    <script src="leaflet.featuregroup.subgroup.js"></script>
+    <script src="leaflet.markercluster.layersupport.js"></script>
+
+</head>
+
+<style>
+#map {
+    width: 1250px;
+    height: 1000px;
+}
+</style>
+
+<!-- We can create multiple style sheets to edit different parts, this sets the style for popups.  -->
+
+
+<style> 
+.leaflet-popup-content-wrapper {
+     border-radius:  0, ;
+     background: grey;
+     color: white;
+     font-size: 10px;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<div id='map'></div>
+
+<script>
+
+//    Still to do: change colour depending on installation type, edit the html on control layer then to include this color. 
+
+    var maxBounds = L.latLngBounds(
+        L.latLng(34,-11.138222), //Southwest
+        L.latLng(66,34.6886862)  //Northeast
+    );
+
+// Set maxBounds in the map variable below in case you want to limit to only Europe. 
+
+    var map = L.map('map',{
+        // 'maxBounds':maxBounds,
+        scrollWheelZoom:true})
+    .setView([52.5, 13.4], 4);
+
+    map.options.minZoom = 4;
+    map.options.maxZoom = 14;
+
+    var base = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+    attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012'
+    }).addTo(map);
+
+    var popup = L.popup();
+
+    function combustionFilter(feature) {
+        if (feature.properties.aggregate_id === "Combustion") return true
+    };
+
+    function refineriesFilter(feature) {
+        if (feature.properties.aggregate_id === "Refineries") return true
+    };
+
+    function cokeFilter(feature) {
+        if (feature.properties.aggregate_id === "Coke ovens") return true
+    };
+
+    function metalFilter(feature) {
+        if (feature.properties.aggregate_id === "Metal") return true
+    };
+
+    function cementFilter(feature) {
+        if (feature.properties.aggregate_id === "Cement and Lime") return true
+    };
+
+    function glassFilter(feature) {
+        if (feature.properties.aggregate_id === "Glass and Ceramics") return true
+    };
+
+    function paperFilter(feature) {
+        if (feature.properties.aggregate_id === "Pulp and Paper") return true
+    };
+
+    function chemicalsFilter(feature) {
+        if (feature.properties.aggregate_id === "Chemicals") return true
+    };
+
+    function hydrogenFilter(feature) {
+        if (feature.properties.aggregate_id === "Hydrogen Production") return true
+    };
+
+    function ccaptureFilter(feature) {
+        if (feature.properties.aggregate_id === "Carbon Capture") return true
+    };
+
+    function othersFilter(feature) {
+        if (feature.properties.aggregate_id === "Other") return true
+    };
+
+
+// I can code the colors HERE: 
+    function style_function(feature) {
+            switch (feature.properties.aggregate_id) {
+                case 'Combustion': return {color: '#2C3E50'}
+                case 'Refineries': return {color: '#7F8C8D'}
+                case 'Coke ovens': return {color: '#BDC3C7'} 
+                case 'Metal': return {color: '#D35400'}
+                case 'Cement and Lime': return {color: '#F39C12'}
+                case 'Glass and Ceramics': return {color: '#2ECC71'}
+                case 'Pulp and Paper': return {color: '#16A085'}
+                case 'Chemicals': return {color: '#3498DB'}
+                case 'Hydrogen Production': return {color: '#8E44AD'}
+                case 'Carbon Capture': return {color: '#E74C3C'}
+                case 'Other': return {color: '#C0392B'}
+                
+                break;
+                default: return {
+                    color: 'red'
+                }
+            }
+    };
+
+    function bubble_size (feature,latlng) {
+            if (feature.properties.bubble_size === 1) {
+                return L.circle(latlng, {
+                    radius: 2000
+                });
+        }   else if (feature.properties.bubble_size === 2) {
+                return L.circle(latlng, {
+                    radius: 5000
+                });
+        }   else if (feature.properties.bubble_size === 3) {
+                return L.circle(latlng, {
+                    radius: 10000
+                });
+        }
+    };
+
+    function popuptext (feature,layer) {
+            if(feature.geometry.type==='Point') {
+                layer.bindPopup('<h3>' + feature.properties.description + '<h3>' + 'Verified Emissions: ' + feature.properties.verified.toLocaleString() +' tonnes CO<sub>2' )
+            };
+
+            layer.on({
+                mousemove: function(e) {
+                    e.target.setStyle({
+                        weight:20
+                    })
+                }
+            })
+            layer.on({
+                mouseout: function(e) {
+                    e.target.setStyle({
+                        weight:2
+                    })
+                }
+            })             
+
+    };
+
+    var addedGeoJSON = L.geoJSON(final, {
+        style : style_function,
+        pointToLayer: bubble_size,    
+        onEachFeature: popuptext,
+        filter:combustionFilter
+        ,
+    })
+
+    var addedGeoJSON2 = L.geoJSON(final, {
+        style : style_function,
+        pointToLayer: bubble_size,    
+        onEachFeature: popuptext,
+        filter:refineriesFilter
+        ,
+    })
+
+    var addedGeoJSON3 = L.geoJSON(final, {
+        style : style_function,
+        pointToLayer: bubble_size,    
+        onEachFeature: popuptext,
+        filter:cokeFilter
+        ,
+    })
+
+    var addedGeoJSON4 = L.geoJSON(final, {
+        style : style_function,
+        pointToLayer: bubble_size,    
+        onEachFeature: popuptext,
+        filter:metalFilter
+        ,
+    })
+
+    var addedGeoJSON5 = L.geoJSON(final, {
+        style : style_function,
+        pointToLayer: bubble_size,    
+        onEachFeature: popuptext,
+        filter:cementFilter
+        ,
+    })
+
+    var addedGeoJSON6 = L.geoJSON(final, {
+        style : style_function,
+        pointToLayer: bubble_size,    
+        onEachFeature: popuptext,
+        filter:glassFilter
+        ,
+    })
+
+    var addedGeoJSON7 = L.geoJSON(final, {
+        style : style_function,
+        pointToLayer: bubble_size,    
+        onEachFeature: popuptext,
+        filter:paperFilter
+        ,
+    })
+
+    var addedGeoJSON8 = L.geoJSON(final, {
+        style : style_function,
+        pointToLayer: bubble_size,    
+        onEachFeature: popuptext,
+        filter:chemicalsFilter
+        ,
+    })
+
+    var addedGeoJSON9 = L.geoJSON(final, {
+        style : style_function,
+        pointToLayer: bubble_size,    
+        onEachFeature: popuptext,
+        filter:hydrogenFilter
+        ,
+    })
+
+    var addedGeoJSON10 = L.geoJSON(final, {
+        style : style_function,
+        pointToLayer: bubble_size,    
+        onEachFeature: popuptext,
+        filter:ccaptureFilter
+        ,
+    })
+
+    var addedGeoJSON11 = L.geoJSON(final, {
+        style : style_function,
+        pointToLayer: bubble_size,    
+        onEachFeature: popuptext,
+        filter:othersFilter
+        ,
+    })
+
+    var combustion = L.markerClusterGroup();
+    var refineries = L.markerClusterGroup();
+    var coke = L.markerClusterGroup();
+    var metal = L.markerClusterGroup();
+    var cement = L.markerClusterGroup();
+    var glass = L.markerClusterGroup();
+    var paper = L.markerClusterGroup();
+    var chemicals = L.markerClusterGroup();
+    var hydrogen = L.markerClusterGroup();
+    var ccapture = L.markerClusterGroup();
+    var others = L.markerClusterGroup();
+
+    var initiateMAP = L.markerClusterGroup({
+        maxClusterRadius: 80,
+        disableClusteringAtZoom: 8
+    });
+
+    combustion.addLayer(addedGeoJSON);
+    refineries.addLayer(addedGeoJSON2);
+    coke.addLayer(addedGeoJSON3);
+    metal.addLayer(addedGeoJSON4)
+    cement.addLayer(addedGeoJSON5);
+    glass.addLayer(addedGeoJSON6);
+    paper.addLayer(addedGeoJSON7);
+    chemicals.addLayer(addedGeoJSON8)
+    hydrogen.addLayer(addedGeoJSON9);
+    ccapture.addLayer(addedGeoJSON10);
+    others.addLayer(addedGeoJSON11)
+
+    combustion_subGroup = L.featureGroup.subGroup(initiateMAP, [addedGeoJSON]);
+    refineries_subGroup = L.featureGroup.subGroup(initiateMAP,[addedGeoJSON2]);
+    coke_subGroup = L.featureGroup.subGroup(initiateMAP, [addedGeoJSON3]);
+    metal_subGroup = L.featureGroup.subGroup(initiateMAP, [addedGeoJSON4]);
+    cement_subGroup = L.featureGroup.subGroup(initiateMAP, [addedGeoJSON5]);
+    glass_subGroup = L.featureGroup.subGroup(initiateMAP,[addedGeoJSON6]);
+    paper_subGroup = L.featureGroup.subGroup(initiateMAP, [addedGeoJSON7]);
+    chemicals_subGroup = L.featureGroup.subGroup(initiateMAP, [addedGeoJSON8]);
+    hydrogen_subGroup = L.featureGroup.subGroup(initiateMAP,[addedGeoJSON9]);
+    ccapture_subGroup = L.featureGroup.subGroup(initiateMAP, [addedGeoJSON10]);
+    others_subGroup = L.featureGroup.subGroup(initiateMAP, [addedGeoJSON11])
+
+    map.addLayer(initiateMAP)
+
+    map.addLayer(combustion_subGroup)
+    map.addLayer(refineries_subGroup)
+    map.addLayer(coke_subGroup)
+    map.addLayer(metal_subGroup)
+    map.addLayer(cement_subGroup)
+    map.addLayer(glass_subGroup)
+    map.addLayer(paper_subGroup)
+    map.addLayer(chemicals_subGroup)
+    map.addLayer(hydrogen_subGroup)
+    map.addLayer(ccapture_subGroup)
+    map.addLayer(others_subGroup)
+
+
+    var baseMap = {
+        'BaseMap' : base
+    }
+
+    var overlayMap = {
+        "<span style='color:black'>DISPLAY INSTALLATIONS:</span>" : initiateMAP,
+        "<span style='color:#2C3E50'>Combustion</span>" : combustion_subGroup,
+        "<span style='color:#7F8C8D'>Refineries</span>" : refineries_subGroup,
+        "<span style='color:#BDC3C7'>Coke Ovens</span>" : coke_subGroup,
+        "<span style='color:#D35400'>Metal</span>" : metal_subGroup,
+        "<span style='color:#F39C12'>Cement and Lime</span>" : cement_subGroup,
+        "<span style='color:#2ECC71'>Glass and Ceramics</span>" : glass_subGroup,
+        "<span style='color:#16A085'>Pulp and Paper</span>" : paper_subGroup,
+        "<span style='color:#3498DB'>Chemicals</span>" : chemicals_subGroup,
+        "<span style='color:#8E44AD'>Hydrogen Production</span>" : hydrogen_subGroup,
+        "<span style='color:#E74C3C'>Carbon Capture</span>" : ccapture_subGroup,
+        "<span style='color:#C0392B'>Other</span>" : others_subGroup
+    }
+
+    var control = L.control.layers(null,overlayMap,{collapsed:false}).addTo(map);
+
+    control.addTo(map)
+
+</script>
+
+</body>
+
+</html>
