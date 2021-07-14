@@ -183,7 +183,7 @@
 
     function popuptext (feature,layer) {
             if(feature.geometry.type==='Point') {
-                layer.bindPopup('<h3>' + feature.properties.description + '<h3>' + 'Verified Emissions: ' + feature.properties.verified.toLocaleString() +' tonnes CO<sub>2' )
+                layer.bindPopup('<h3>' + feature.properties.description + '<h3>' + 'Verified Emissions (2019): ' + feature.properties.verified.toLocaleString() +' tonnes CO<sub>2' )
             };
 
             layer.on({
