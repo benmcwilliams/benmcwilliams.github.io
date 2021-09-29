@@ -168,15 +168,15 @@
     function bubble_size (feature,latlng) {
             if (feature.properties.bubble_size === 1) {
                 return L.circle(latlng, {
-                    radius: 4000
+                    radius: 3000
                 });
         }   else if (feature.properties.bubble_size === 2) {
                 return L.circle(latlng, {
-                    radius: 10000
+                    radius: 8000
                 });
         }   else if (feature.properties.bubble_size === 3) {
                 return L.circle(latlng, {
-                    radius: 20000
+                    radius: 15000
                 });
         }
     };
@@ -308,7 +308,8 @@
         maxClusterRadius: 80,
         disableClusteringAtZoom: 3
     });
-
+   
+    combustion.addLayer(addedGeoJSON);
     refineries.addLayer(addedGeoJSON2);
     coke.addLayer(addedGeoJSON3);
     metal.addLayer(addedGeoJSON4)
@@ -334,7 +335,7 @@
 
     map.addLayer(initiateMAP)
 
-    map.addLayer(combustion_subGroup)
+//     map.addLayer(combustion_subGroup)
     map.addLayer(refineries_subGroup)
     map.addLayer(coke_subGroup)
     map.addLayer(metal_subGroup)
