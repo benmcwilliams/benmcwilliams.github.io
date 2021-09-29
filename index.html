@@ -402,9 +402,9 @@
     var solarlayer = L.geoJSON(solar,{
         pointToLayer: function(feature, latlng) {
             return L.circle(latlng, {
-                radius: Number(feature.properties.capacity_mw)*70,
-                fillColor: '#D09917',
-                color: '#D09917'
+                radius: Number(feature.properties.capacity_mw)*60,
+                fillColor: '#E3C113',
+                color: '#E3C113'
             })},
             onEachFeature(feature,layer) {
             layer.bindPopup('<h3>' + 'Solar PV Power' + '<h3>' + 'Capacity (MW): ' + feature.properties.capacity_mw.toLocaleString() )
@@ -413,7 +413,7 @@
     var windlayer = L.geoJSON(wind,{
         pointToLayer: function(feature, latlng) {
             return L.circle(latlng, {
-                radius: Number(feature.properties.capacity_mw)*70,
+                radius: Number(feature.properties.capacity_mw)*60,
                 fillColor: '#05BBC1',
                 color: '#05BBC1'
             })},
