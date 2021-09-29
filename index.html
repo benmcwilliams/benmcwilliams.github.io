@@ -34,7 +34,7 @@
       crossorigin=""
     ></script>
 
-    <script src="cleaned_installations2.js"></script>  
+    <script src="cleaned_installations3.js"></script>  
     <script src="markercluster-src.js"></script>
     <script src="markercluster.js"></script>  
     <script src="leaflet.featuregroup.subgroup.js"></script>
@@ -97,8 +97,12 @@
         if (feature.properties.aggregate_id === "Coke ovens") return true
     };
 
-    function metalFilter(feature) {
-        if (feature.properties.aggregate_id === "Metal") return true
+    function metalFFilter(feature) {
+        if (feature.properties.aggregate_id === "Metal (ferrous)") return true
+    };
+
+    function metalNFFilter(feature) {
+        if (feature.properties.aggregate_id === "Metal (non-ferrous)") return true
     };
 
     function cementFilter(feature) {
@@ -134,7 +138,8 @@
                 case 'Combustion': return {color: '#2C3E50'}
                 case 'Refineries': return {color: '#7F8C8D'}
                 case 'Coke ovens': return {color: '#BDC3C7'} 
-                case 'Metal': return {color: '#D35400'}
+                case 'Metal (ferrous)': return {color: '#C14E02'}
+                case 'Metal (non-ferrous)': return {color: '#F07E31'}
                 case 'Cement and Lime': return {color: '#F39C12'}
                 case 'Glass and Ceramics': return {color: '#2ECC71'}
                 case 'Pulp and Paper': return {color: '#16A085'}
@@ -217,7 +222,15 @@
         style : style_function,
         pointToLayer: bubble_size,    
         onEachFeature: popuptext,
-        filter:metalFilter
+        filter:metalFFilter
+        ,
+    })
+
+    var addedGeoJSON41 = L.geoJSON(final, {
+        style : style_function,
+        pointToLayer: bubble_size,    
+        onEachFeature: popuptext,
+        filter:metalNFFilter
         ,
     })
 
@@ -280,7 +293,8 @@
     var combustion = L.markerClusterGroup();
     var refineries = L.markerClusterGroup();
     var coke = L.markerClusterGroup();
-    var metal = L.markerClusterGroup();
+    var metalF = L.markerClusterGroup();
+    var metalNF = L.markerClusterGroup();
     var cement = L.markerClusterGroup();
     var glass = L.markerClusterGroup();
     var paper = L.markerClusterGroup();
@@ -297,7 +311,8 @@
     combustion.addLayer(addedGeoJSON);
     refineries.addLayer(addedGeoJSON2);
     coke.addLayer(addedGeoJSON3);
-    metal.addLayer(addedGeoJSON4)
+    metalF.addLayer(addedGeoJSON4);
+    metalNF.addLayer(addedGeoJSON41);
     cement.addLayer(addedGeoJSON5);
     glass.addLayer(addedGeoJSON6);
     paper.addLayer(addedGeoJSON7);
@@ -309,7 +324,8 @@
     combustion_subGroup = L.featureGroup.subGroup(initiateMAP, [addedGeoJSON]);
     refineries_subGroup = L.featureGroup.subGroup(initiateMAP,[addedGeoJSON2]);
     coke_subGroup = L.featureGroup.subGroup(initiateMAP, [addedGeoJSON3]);
-    metal_subGroup = L.featureGroup.subGroup(initiateMAP, [addedGeoJSON4]);
+    metalF_subGroup = L.featureGroup.subGroup(initiateMAP, [addedGeoJSON4]);
+    metalNF_subGroup = L.featureGroup.subGroup(initiateMAP, [addedGeoJSON41]);
     cement_subGroup = L.featureGroup.subGroup(initiateMAP, [addedGeoJSON5]);
     glass_subGroup = L.featureGroup.subGroup(initiateMAP,[addedGeoJSON6]);
     paper_subGroup = L.featureGroup.subGroup(initiateMAP, [addedGeoJSON7]);
@@ -323,7 +339,8 @@
 //     map.addLayer(combustion_subGroup)
     map.addLayer(refineries_subGroup)
     map.addLayer(coke_subGroup)
-    map.addLayer(metal_subGroup)
+    map.addLayer(metalF_subGroup)
+    map.addLayer(metalNF_subGroup)
     map.addLayer(cement_subGroup)
     map.addLayer(glass_subGroup)
     map.addLayer(paper_subGroup)
@@ -341,7 +358,8 @@
         "<span style='color:#2C3E50'>Combustion</span>" : combustion_subGroup,
         "<span style='color:#7F8C8D'>Refineries</span>" : refineries_subGroup,
         "<span style='color:#BDC3C7'>Coke Ovens</span>" : coke_subGroup,
-        "<span style='color:#D35400'>Metal</span>" : metal_subGroup,
+        "<span style='color:#C14E02'>Metal (ferrous)</span>" : metalF_subGroup,
+        "<span style='color:#F07E31'>Metal (non-ferrous)</span>" : metalNF_subGroup,
         "<span style='color:#F39C12'>Cement and Lime</span>" : cement_subGroup,
         "<span style='color:#2ECC71'>Glass and Ceramics</span>" : glass_subGroup,
         "<span style='color:#16A085'>Pulp and Paper</span>" : paper_subGroup,
