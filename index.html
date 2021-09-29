@@ -378,6 +378,66 @@
 
     control.addTo(map)
 
+
+    function pipstyle(feature) {
+        return {
+            "color": "#974F0B",
+            "weight":2,
+        }
+    }
+
+    var globalpipes = L.geoJSON(gpipes, {style: pipstyle})
+
+    var coallayer = L.geoJSON(nutscoal,{
+        pointToLayer: function(feature, latlng) {
+            return L.circle(latlng, {
+                radius: Number(feature.properties.production)*1000,
+                fillColor: '#A0650A',
+                color: '#5A2908'
+            })},
+            onEachFeature(feature,layer) {
+                layer.bindPopup('<h3>' + 'Coal Mine' + '<h3>' + 'Production (2015): ' + feature.properties.production.toLocaleString() +'Mt' )
+            }})
+
+    var solarlayer = L.geoJSON(solar,{
+        pointToLayer: function(feature, latlng) {
+            return L.circle(latlng, {
+                radius: Number(feature.properties.capacity_mw)*70,
+                fillColor: '#D09917',
+                color: '#D09917'
+            })},
+            onEachFeature(feature,layer) {
+            layer.bindPopup('<h3>' + 'Solar PV Power' + '<h3>' + 'Capacity (MW): ' + feature.properties.capacity_mw.toLocaleString() )
+    }})
+
+    var windlayer = L.geoJSON(wind,{
+        pointToLayer: function(feature, latlng) {
+            return L.circle(latlng, {
+                radius: Number(feature.properties.capacity_mw)*70,
+                fillColor: '#05BBC1',
+                color: '#05BBC1'
+            })},
+            onEachFeature(feature,layer) {
+            layer.bindPopup('<h3>' + 'Wind Power' + '<h3>' + 'Capacity (MW): ' + feature.properties.capacity_mw.toLocaleString() )
+    }})
+
+    var parentsrc= new L.MarkerClusterGroup({
+        maxClusterRadius: 80,
+        disableClusteringAtZoom: 3
+    }).addTo(map);
+
+    map.addLayer(parentsrc)
+
+    var overlaysrc={}
+    overlaysrc["Coal Mines"]=L.featureGroup.subGroup(parentsrc,[coallayer]);
+    overlaysrc["Oil Pipelines"]=L.featureGroup.subGroup(parentsrc,[globalpipes]);
+    overlaysrc["Wind Power"]=L.featureGroup.subGroup(parentsrc,[windlayer]);
+    overlaysrc["Solar PV"]=L.featureGroup.subGroup(parentsrc,[solarlayer]);
+
+    control = L.control.layers(null, overlaysrc, {collapsed: false });
+    control.addTo(map);
+
+
 </script>
 
 </body>
