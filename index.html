@@ -6,11 +6,6 @@
 
 <title>Leaflet Web Map</title>
 
-<!-- https://www.youtube.com/watch?v=SCjVNBemQdc&list=PLm76kc4VPkn27kRYq-58COO5r5bQdrKyy&index=10 -->
-
-<!-- We can see a range of basemaps at http://leaflet-extras.github.io/leaflet-providers/preview/index.html -->
-<!-- we need to reference the CSS and JavaScript files of leaflet.  -->
-
    <link
       rel="stylesheet"
       href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
@@ -54,9 +49,6 @@
 }
 </style>
 
-<!-- We can create multiple style sheets to edit different parts, this sets the style for popups.  -->
-
-
 <style> 
 .leaflet-popup-content-wrapper {
      border-radius:  0, ;
@@ -66,7 +58,6 @@
 }
 </style>
 
-
 </head>
 
 <body>
@@ -75,14 +66,10 @@
 
 <script>
 
-//    Still to do: change colour depending on installation type, edit the html on control layer then to include this color. 
-
     var maxBounds = L.latLngBounds(
         L.latLng(34,-11.138222), //Southwest
         L.latLng(66,34.6886862)  //Northeast
     );
-
-// Set maxBounds in the map variable below in case you want to limit to only Europe. 
 
     var map = L.map('map',{
         // 'maxBounds':maxBounds,
@@ -142,8 +129,6 @@
         if (feature.properties.aggregate_id === "Other") return true
     };
 
-
-// I can code the colors HERE: 
     function style_function(feature) {
             switch (feature.properties.aggregate_id) {
                 case 'Combustion': return {color: '#2C3E50'}
@@ -346,7 +331,6 @@
     map.addLayer(hydrogen_subGroup)
     map.addLayer(ccapture_subGroup)
     map.addLayer(others_subGroup)
-
 
     var baseMap = {
         'BaseMap' : base
