@@ -396,7 +396,7 @@
                 color: '#5A2908'
             })},
             onEachFeature(feature,layer) {
-                layer.bindPopup('<h3>' + 'Coal Mine' + '<h3>' + 'Production (2015): ' + feature.properties.production.toLocaleString() +'Mt' )
+                layer.bindPopup('<h3>' + 'Coal Mine' + ' (' + feature.properties.type.toLocaleString() + ')' + '<h3>' + 'Production (2015): ' + feature.properties.production.toLocaleString() +'Mt' )
             }})
 
     var solarlayer = L.geoJSON(solar,{
