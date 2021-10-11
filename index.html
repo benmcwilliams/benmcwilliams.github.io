@@ -39,6 +39,7 @@
     <script src='solarplants.js'></script> 
     <script src="cleaned_installations3.js"></script>  
     <script src="nutscoal.js"></script>
+    <script src="steelplants.js"></script>
    
     <script src="markercluster-src.js"></script>
     <script src="markercluster.js"></script>  
@@ -420,6 +421,17 @@
             onEachFeature(feature,layer) {
             layer.bindPopup('<h3>' + 'Wind Power' + '<h3>' + 'Capacity (MW): ' + feature.properties.capacity_mw.toLocaleString() )
     }})
+    
+    var steellayer = L.geoJSON(steel,{
+        pointToLayer: function(feature, latlng) {
+            return L.circle(latlng, {
+                radius: 25000,
+                fillColor: '#76E804',
+                color: '#76E804'
+            })},
+            onEachFeature(feature,layer) {
+            layer.bindPopup('<h3>' + 'Low Carbon' + feature.properties.technology.toLocaleString() +  '<h3>' + feature.properties.specific_technology.toLocaleString() )
+    }})
 
     var parentsrc= new L.MarkerClusterGroup({
         maxClusterRadius: 80,
@@ -433,6 +445,7 @@
     overlaysrc["Oil Pipelines"]=L.featureGroup.subGroup(parentsrc,[globalpipes]);
     overlaysrc["Wind Power"]=L.featureGroup.subGroup(parentsrc,[windlayer]);
     overlaysrc["Solar PV"]=L.featureGroup.subGroup(parentsrc,[solarlayer]);
+    overlaysrc["Low Carbon Steel"]=L.featureGroup.subGroup(parentsrc,[steellayer]);
 
     control = L.control.layers(null, overlaysrc, {collapsed: false });
     control.addTo(map);
