@@ -164,15 +164,15 @@
     function bubble_size (feature,latlng) {
             if (feature.properties.bubble_size === 1) {
                 return L.circle(latlng, {
-                    radius: 6000
+                    radius: 3000
                 });
         }   else if (feature.properties.bubble_size === 2) {
                 return L.circle(latlng, {
-                    radius: 16000
+                    radius: 8000
                 });
         }   else if (feature.properties.bubble_size === 3) {
                 return L.circle(latlng, {
-                    radius: 30000
+                    radius: 15000
                 });
         }
     };
