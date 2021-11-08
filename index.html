@@ -50,8 +50,8 @@
 
 <style>
 #map {
-    width: 1250px;
-    height: 1000px;
+    width: 800px;
+    height: 500px;
 }
 </style>
 
@@ -78,11 +78,11 @@
     );
 
     var map = L.map('map',{
-        'maxBounds':maxBounds,
+       // 'maxBounds':maxBounds,
         scrollWheelZoom:true})
-    .setView([49, 27], 3);
+    .setView([52, 13], 4);
 
-    map.options.minZoom = 3;
+    map.options.minZoom = 4;
     map.options.maxZoom = 14;
 
     var base = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
