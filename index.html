@@ -37,6 +37,7 @@
     <script src="globalpipes.js"></script>  
     <script src='windplants.js'></script>   
     <script src='solarplants.js'></script> 
+    <script src='NutsWind3a.js'></script>   
     <script src="cleaned_installations3.js"></script>  
     <script src="nutscoal.js"></script>
     <script src="steelplants.js"></script>
@@ -444,6 +445,29 @@
             layer.bindPopup('<h3>' + 'Wind turbine')
     }})
 
+    function getColor(d) {
+    return d > 0.1   ?  '#2b5082' :
+           d > 0.08  ? '#3E73BB' :
+           d > 0.06  ? '#699ACD' :
+           d > 0.04  ? '#90A6DA' :
+           d > 0.02   ? '#AEC3E4' :
+           d > 0.001   ? '#DCE5F3' :
+                      '#FEFDFC';
+    }
+
+    function WINDstyle(feature) {
+    return {
+        fillColor: getColor(feature.properties.ratio),
+        weight: 2,
+        opacity: 1,
+        color: 'white',
+        dashArray: '3',
+        fillOpacity: 0.7
+    };
+    }
+
+    var wnuts = L.geoJSON(NutsWINDa, {style:WINDstyle})
+    
     var parentsrc= new L.MarkerClusterGroup({
         maxClusterRadius: 80,
         disableClusteringAtZoom: 3
@@ -457,7 +481,7 @@
     overlaysrc["Wind Power"]=L.featureGroup.subGroup(parentsrc,[windlayer]);
     overlaysrc["Solar PV"]=L.featureGroup.subGroup(parentsrc,[solarlayer]);
     overlaysrc["Low Carbon Steel"]=L.featureGroup.subGroup(parentsrc,[steellayer]);
-    overlaysrc["Wind (OpenMap)"]=L.featureGroup.subGroup(parentsrc,[openwindlayer]);
+    overlaysrc["Wind (OpenMap)"]=L.featureGroup.subGroup(parentsrc,[wnuts]);
 
     control = L.control.layers(null, overlaysrc, {collapsed: false });
     control.addTo(map);
