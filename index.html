@@ -41,7 +41,6 @@
     <script src="cleaned_installations3.js"></script>  
     <script src="nutscoal.js"></script>
     <script src="steelplants.js"></script>
-    <script src='openwind.js'></script> 
     <script src="markercluster-src.js"></script>
     <script src="markercluster.js"></script>  
     <script src="leaflet.featuregroup.subgroup.js"></script>
@@ -432,17 +431,6 @@
             })},
             onEachFeature(feature,layer) {
             layer.bindPopup('<h3>' + 'Low Carbon' + feature.properties.technology.toLocaleString() +  '<h3>' + feature.properties.specific_technology.toLocaleString() )
-    }})
-    
-    var openwindlayer = L.geoJSON(openwind,{
-        pointToLayer: function(feature, latlng) {
-            return L.circle(latlng, {
-                radius: 1500,
-                fillColor: '#10DEC1',
-                color: '#10DEC1'
-            })},
-            onEachFeature(feature,layer) {
-            layer.bindPopup('<h3>' + 'Wind turbine')
     }})
 
     function getColor(d) {
